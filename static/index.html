@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChordScribe</title>
+<style>
+  :root {
+    --bg: #14130f; --panel: #1f1d17; --line: #38342a; --text: #f3eee2;
+    --muted: #a39b89; --accent: #e9a23b; --accent-ink: #231703; --danger: #ff8d7a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; background: var(--bg); color: var(--text);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 28px 24px 56px; }
+  header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 24px; }
+  h1 { font-size: 22px; margin: 0; letter-spacing: -0.01em; }
+  header p { margin: 0; color: var(--muted); font-size: 14px; }
+  h2 { font-size: 13px; margin: 0 0 12px; color: var(--muted); font-weight: 600; }
+  button { font: inherit; cursor: pointer; }
+  button:focus-visible, label:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  #drop {
+    border: 1.5px dashed var(--line); border-radius: 14px; padding: 72px 24px;
+    text-align: center; background: var(--panel); transition: border-color .15s;
+  }
+  #drop.over { border-color: var(--accent); }
+  #drop strong { display: block; font-size: 22px; margin-bottom: 6px; }
+  #drop p { margin: 0 0 22px; color: var(--muted); }
+  .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .button {
+    display: inline-block; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--line);
+    background: transparent; color: var(--text); font-size: 15px; cursor: pointer;
+  }
+  .button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  #file { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  #message { min-height: 24px; margin: 14px 0 0; color: var(--muted); text-align: center; }
+  #message.error { color: var(--danger); }
+
+  #player[hidden], #drop[hidden] { display: none; }
+  .song { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; margin-bottom: 16px; }
+  #title { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #facts { color: var(--muted); font-size: 14px; white-space: nowrap; }
+  .mode { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; color: var(--muted); font-size: 14px; cursor: pointer; width: fit-content; }
+  .mode input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+
+  .stage {
+    display: grid; grid-template-columns: 1fr 190px; gap: 24px; align-items: center;
+    background: var(--panel); border-radius: 14px; padding: 26px 32px; margin-bottom: 14px;
+  }
+  #now { font-size: 104px; line-height: 1.05; font-weight: 700; letter-spacing: -0.03em; min-height: 110px; }
+  #now.unsure { color: var(--muted); }
+  #next { color: var(--muted); font-size: 18px; min-height: 27px; }
+  #next b { color: var(--text); font-weight: 600; }
+
+  #strip {
+    position: relative; height: 76px; overflow: hidden; background: var(--panel);
+    border-radius: 10px; margin-bottom: 14px;
+  }
+  #track { position: absolute; top: 10px; bottom: 10px; left: 0; will-change: transform; }
+  #playhead { position: absolute; top: 0; bottom: 0; left: 30%; width: 2px; background: var(--accent); z-index: 2; pointer-events: none; }
+  .block {
+    position: absolute; top: 0; bottom: 0; padding: 0 0 0 8px; text-align: left;
+    color: var(--text); background: #2c2920; border: 1px solid var(--line); border-radius: 6px;
+    overflow: hidden; white-space: nowrap; font-size: 15px; font-weight: 600;
+  }
+  .block.unsure { border-style: dashed; color: var(--muted); font-weight: 400; background: transparent; }
+  .block.silent { background: transparent; border-color: transparent; color: var(--muted); }
+  .block.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+  audio { width: 100%; margin-bottom: 26px; display: block; }
+  #shapes { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 12px; }
+  .shape { background: var(--panel); border-radius: 10px; padding: 10px 8px 6px; text-align: center; font-weight: 600; }
+  .legend { color: var(--muted); font-size: 14px; margin: 18px 0 0; }
+  .footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 18px; }
+  .footer .legend { margin: 0; }
+  @media (max-width: 640px) {
+    .stage { grid-template-columns: 1fr; padding: 20px; }
+    #now { font-size: 76px; min-height: 84px; }
+    .song { flex-direction: column; gap: 2px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>ChordScribe</h1>
+    <p>See the chords in any song</p>
+  </header>
+
+  <section id="drop" aria-label="Choose a song">
+    <strong id="dropTitle">Drop a song here</strong>
+    <p id="dropHint">MP3, M4A, WAV, AIFF or FLAC. It's analyzed on this Mac and never uploaded.</p>
+    <div class="actions" id="dropActions">
+      <label class="button primary">Choose a song<input id="file" type="file" accept=".mp3,.m4a,.aac,.wav,.aif,.aiff,.flac,.caf"></label>
+      <button class="button" id="demo" type="button">Try the demo</button>
+    </div>
+    <p id="message" role="status"></p>
+  </section>
+
+  <section id="player" hidden>
+    <div class="song">
+      <div id="title"></div>
+      <div id="facts"></div>
+    </div>
+    <label class="mode"><input id="power" type="checkbox">Power chord mode: show roots as 5 chords, for riff-based rock and metal</label>
+    <div class="stage">
+      <div>
+        <div id="now" aria-live="off"></div>
+        <div id="next"></div>
+      </div>
+      <div id="nowShape"></div>
+    </div>
+    <div id="strip">
+      <div id="playhead"></div>
+      <div id="track"></div>
+    </div>
+    <audio id="audio" controls></audio>
+    <h2>Main chords in this song</h2>
+    <div id="shapes"></div>
+    <div class="footer">
+      <p class="legend">Dashed chords are the app's less certain guesses. Click any chord to jump there.</p>
+      <button class="button" id="another" type="button">Choose another song</button>
+    </div>
+  </section>
+</main>
+
+<script>
+const PIXELS_PER_SECOND = 70;
+const UNSURE_BELOW = 0.5;
+const MAX_SHAPES = 12;
+const $ = id => document.getElementById(id);
+const audio = $("audio");
+let song = null;
+let segments = [];
+let blocks = [];
+let activeIndex = -1;
+let audioUrl = null;
+
+// Guitar shapes, low E string first. "x" means don't play the string.
+const OPEN = {
+  C: "x32010", D: "xx0232", E: "022100", G: "320003", A: "x02220",
+  Am: "x02210", Dm: "xx0231", Em: "022000",
+  C7: "x32310", D7: "xx0212", E7: "020100", G7: "320001", A7: "x02020", B7: "x21202",
+  Am7: "x02010", Dm7: "xx0211", Em7: "020000",
+  E5: "022xxx", A5: "x022xx", D5: "xx023x",
+};
+const BARRE = {
+  "": { e: "022100", a: "x02220" }, m: { e: "022000", a: "x02210" },
+  "7": { e: "020100", a: "x02020" }, m7: { e: "020000", a: "x02010" },
+  "5": { e: "022xxx", a: "x022xx" },
+};
+const FRET_OF_E = { E: 0, F: 1, "F#": 2, G: 3, Ab: 4, A: 5, Bb: 6, B: 7, C: 8, "C#": 9, D: 10, Eb: 11 };
+
+function shapeFor(chord) {
+  if (OPEN[chord]) return [...OPEN[chord]].map(c => c === "x" ? null : +c);
+  const match = chord.match(/^([A-G][#b]?)(.*)$/);
+  if (!match || !BARRE[match[2]]) return null;
+  const onE = FRET_OF_E[match[1]];
+  const onA = (onE + 7) % 12;
+  // Whichever barre sits lower on the neck.
+  const useE = onE > 0 && (onE <= onA || onA === 0);
+  const base = useE ? onE : onA;
+  const pattern = useE ? BARRE[match[2]].e : BARRE[match[2]].a;
+  return [...pattern].map(c => c === "x" ? null : +c + base);
+}
+
+function diagram(chord, width = 104) {
+  const frets = shapeFor(chord);
+  if (!frets) return "";
+  const played = frets.filter(f => f !== null && f > 0);
+  const lowest = played.length ? Math.min(...played) : 1;
+  const highest = played.length ? Math.max(...played) : 1;
+  const start = highest <= 4 ? 1 : lowest;
+  const rows = 4, left = 22, top = 22, gapX = 14, gapY = 20;
+  const right = left + 5 * gapX, bottom = top + rows * gapY;
+  let svg = `<svg viewBox="0 0 112 ${bottom + 8}" width="${width}" role="img" aria-label="${chord} guitar shape">`;
+  const line = 'stroke="#a39b89" stroke-width="1"';
+  for (let s = 0; s < 6; s++) svg += `<line x1="${left + s * gapX}" y1="${top}" x2="${left + s * gapX}" y2="${bottom}" ${line}/>`;
+  for (let r = 0; r <= rows; r++) svg += `<line x1="${left}" y1="${top + r * gapY}" x2="${right}" y2="${top + r * gapY}" ${line}/>`;
+  if (start === 1) svg += `<rect x="${left}" y="${top - 3}" width="${right - left}" height="3" fill="#f3eee2"/>`;
+  else svg += `<text x="${left - 7}" y="${top + 15}" text-anchor="end" font-size="11" fill="#a39b89">${start}</text>`;
+  frets.forEach((fret, s) => {
+    const x = left + s * gapX;
+    if (fret === null) svg += `<text x="${x}" y="${top - 8}" text-anchor="middle" font-size="11" fill="#a39b89">×</text>`;
+    else if (fret === 0) svg += `<circle cx="${x}" cy="${top - 12}" r="3.5" fill="none" stroke="#a39b89"/>`;
+    else svg += `<circle cx="${x}" cy="${top + (fret - start + 0.5) * gapY}" r="5.5" fill="#e9a23b"/>`;
+  });
+  return svg + "</svg>";
+}
+
+const shown = chord => chord === "N" ? "–" : chord;
+
+function setMessage(text, isError = false) {
+  $("message").textContent = text;
+  $("message").classList.toggle("error", isError);
+}
+
+function setBusy(busy) {
+  $("dropActions").style.visibility = busy ? "hidden" : "visible";
+  $("dropTitle").textContent = busy ? "Listening to the song…" : "Drop a song here";
+}
+
+async function analyze(file) {
+  setBusy(true);
+  setMessage("This usually takes about 30 seconds.");
+  try {
+    const response = await fetch(`/api/analyze?name=${encodeURIComponent(file.name)}`, { method: "POST", body: file });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error);
+    showSong(file, result);
+    setMessage("");
+  } catch (error) {
+    setMessage(error.message || "Something went wrong reading that file.", true);
+  } finally {
+    setBusy(false);
+  }
+}
+
+function showSong(file, result) {
+  song = result;
+  if (audioUrl) URL.revokeObjectURL(audioUrl);
+  audioUrl = URL.createObjectURL(file);
+  audio.src = audioUrl;
+
+  $("title").textContent = file.name.replace(/\.[^.]+$/, "");
+  const facts = [`Key: ${result.key}`];
+  if (result.tempo) facts.push(`${Math.round(result.tempo)} BPM`);
+  $("facts").textContent = facts.join("  ·  ");
+
+  drawChords();
+  $("drop").hidden = true;
+  $("player").hidden = false;
+}
+
+function drawChords() {
+  segments = $("power").checked ? song.power_segments : song.segments;
+  activeIndex = -1;
+  const track = $("track");
+  track.replaceChildren();
+  blocks = segments.map(segment => {
+    const block = document.createElement("button");
+    block.type = "button";
+    block.className = "block";
+    if (segment.chord === "N") block.classList.add("silent");
+    else if (segment.confidence < UNSURE_BELOW) block.classList.add("unsure");
+    block.style.left = `${segment.start * PIXELS_PER_SECOND}px`;
+    block.style.width = `${Math.max((segment.end - segment.start) * PIXELS_PER_SECOND - 3, 4)}px`;
+    block.textContent = shown(segment.chord);
+    block.setAttribute("aria-label", `${shown(segment.chord)} at ${Math.floor(segment.start)} seconds`);
+    block.addEventListener("click", () => { audio.currentTime = segment.start; });
+    track.append(block);
+    return block;
+  });
+  track.style.width = `${song.duration * PIXELS_PER_SECOND}px`;
+
+  const totals = {};
+  for (const { chord, start, end } of segments) {
+    if (chord !== "N") totals[chord] = (totals[chord] || 0) + end - start;
+  }
+  const main = Object.keys(totals).sort((a, b) => totals[b] - totals[a]).slice(0, MAX_SHAPES);
+  $("shapes").innerHTML = main.map(chord => `<div class="shape">${chord}${diagram(chord)}</div>`).join("");
+  update();
+}
+
+function indexAt(time) {
+  let low = 0, high = segments.length - 1;
+  while (low < high) {
+    const middle = Math.ceil((low + high) / 2);
+    if (segments[middle].start <= time) low = middle; else high = middle - 1;
+  }
+  return low;
+}
+
+function update() {
+  if (!segments.length) return;
+  const time = audio.currentTime;
+  const strip = $("strip").clientWidth;
+  $("track").style.transform = `translateX(${strip * 0.3 - time * PIXELS_PER_SECOND}px)`;
+  const index = indexAt(time);
+  if (index === activeIndex) return;
+  blocks[activeIndex]?.classList.remove("active");
+  blocks[index].classList.add("active");
+  activeIndex = index;
+  const segment = segments[index];
+  $("now").textContent = shown(segment.chord);
+  $("now").classList.toggle("unsure", segment.chord !== "N" && segment.confidence < UNSURE_BELOW);
+  $("nowShape").innerHTML = diagram(segment.chord, 180);
+  const following = segments.slice(index + 1).find(s => s.chord !== "N");
+  $("next").innerHTML = following ? `Next: <b>${following.chord}</b>` : "";
+}
+
+function tick() {
+  update();
+  if (!audio.paused) requestAnimationFrame(tick);
+}
+audio.addEventListener("play", tick);
+audio.addEventListener("seeked", update);
+audio.addEventListener("timeupdate", update);
+window.addEventListener("resize", update);
+
+$("power").addEventListener("change", drawChords);
+$("file").addEventListener("change", event => {
+  if (event.target.files[0]) analyze(event.target.files[0]);
+  event.target.value = "";
+});
+$("demo").addEventListener("click", async () => {
+  const blob = await (await fetch("/demo.wav")).blob();
+  analyze(new File([blob], "ChordScribe demo.wav", { type: "audio/wav" }));
+});
+$("another").addEventListener("click", () => {
+  audio.pause();
+  segments = [];
+  $("player").hidden = true;
+  $("drop").hidden = false;
+});
+
+const drop = $("drop");
+for (const type of ["dragenter", "dragover"]) {
+  window.addEventListener(type, event => { event.preventDefault(); drop.classList.add("over"); });
+}
+window.addEventListener("dragleave", event => { if (!event.relatedTarget) drop.classList.remove("over"); });
+window.addEventListener("drop", event => {
+  event.preventDefault();
+  drop.classList.remove("over");
+  const file = event.dataTransfer.files[0];
+  if (file) {
+    audio.pause();
+    segments = [];
+    $("player").hidden = true;
+    drop.hidden = false;
+    analyze(file);
+  }
+});
+window.addEventListener("keydown", event => {
+  if (event.code !== "Space" || $("player").hidden || event.target.closest("button, audio, input")) return;
+  event.preventDefault();
+  audio.paused ? audio.play() : audio.pause();
+});
+</script>
+</body>
+</html>

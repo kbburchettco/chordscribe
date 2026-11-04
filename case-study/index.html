@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChordScribe Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap" rel="stylesheet">
+<style>
+  /* Layout idea: a single reading column, like a lab notebook, that widens only for the results chart and tables. */
+  :root {
+    --paper: #f5f7f6;
+    --panel: #e9eeec;
+    --ink: #17211f;
+    --muted: #55635f;
+    --line: #cdd6d3;
+    --allowed: #0b6b73;
+    --found: #b4501b;
+    --display: "Newsreader", Georgia, serif;
+    --body: "IBM Plex Sans", -apple-system, "Helvetica Neue", sans-serif;
+    --mono: "IBM Plex Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #111816; --panel: #1b2421; --ink: #e9efec; --muted: #a2b0ab; --line: #33403c;
+      --allowed: #5cc4cc; --found: #f0a36e; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #111816; --panel: #1b2421; --ink: #e9efec; --muted: #a2b0ab; --line: #33403c;
+    --allowed: #5cc4cc; --found: #f0a36e; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.6 var(--body); }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 24px 72px; }
+  h1, h2 { font-family: var(--display); font-weight: 500; text-wrap: balance; letter-spacing: -0.01em; }
+  h1 { font-size: clamp(40px, 7vw, 60px); line-height: 1.05; margin: 0 0 14px; }
+  h2 { font-size: 30px; line-height: 1.2; margin: 52px 0 12px; }
+  p, ul, ol { max-width: 66ch; margin: 0 0 14px; }
+  li { margin-bottom: 7px; }
+  .lede { font-size: 20px; line-height: 1.45; color: var(--muted); }
+  .chords { font-family: var(--mono); font-size: 0.92em; white-space: nowrap; }
+  .numbers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); margin: 30px 0 8px; }
+  .number { background: var(--paper); padding: 18px 18px 16px; }
+  .number b { display: block; font: 500 27px/1.1 var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .number span { display: block; font-size: 15px; line-height: 1.35; color: var(--muted); margin-top: 8px; }
+  .number strong { display: block; color: var(--ink); font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+  .note { font-size: 15px; color: var(--muted); }
+  .legend { display: flex; gap: 22px; flex-wrap: wrap; font-size: 15px; color: var(--muted); margin: 16px 0 6px; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .chart-wrap { position: relative; overflow-x: auto; }
+  svg { display: block; width: 100%; min-width: 620px; height: auto; }
+  svg text { fill: var(--muted); font: 13px var(--body); }
+  svg .song { fill: var(--ink); }
+  svg .group { fill: var(--ink); font-weight: 600; }
+  svg .hit { fill: transparent; }
+  svg .row:hover .hit, svg .row:focus .hit { fill: var(--panel); }
+  svg .row:focus { outline: none; }
+  #tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--paper); font-size: 14px; line-height: 1.35; padding: 7px 10px; border-radius: 4px; opacity: 0; max-width: 260px; }
+  .table-wrap { overflow-x: auto; margin: 18px 0 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; }
+  td.n, th.n { text-align: right; white-space: nowrap; }
+  tr.band td { font-weight: 600; padding-top: 18px; }
+  .verdict { font-weight: 600; white-space: nowrap; }
+  footer { margin-top: 52px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 15px; color: var(--muted); }
+  @media (max-width: 620px) {
+    main { padding-top: 36px; }
+    .numbers { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>ChordScribe</h1>
+  <p class="lede">I wanted a Mac app that could listen to any song and write out its chords. I built one, then tested it against official tabs to find out where it works and where it doesn't.</p>
+
+  <section class="numbers" aria-label="Headline results, normal mode">
+    <div class="number"><strong>Best case</strong><b>97.2% / 100%</b><span>Allowed / Found on a simple, cleaner song chosen to suit the app</span></div>
+    <div class="number"><strong>Fair test</strong><b>66.1% / 60.9%</b><span>Average on four songs held back from all tuning and scored once</span></div>
+    <div class="number"><strong>Worst case</strong><b>31.5% / 50.0%</b><span>Pantera's <em>Cowboys From Hell</em>, one of the held-back songs</span></div>
+  </section>
+  <p class="note">Allowed is the share of time showing a chord root the tab lists for that section. Found is the share of a section's listed roots the app actually showed. These are section-level checks, not chord-by-chord accuracy.</p>
+
+  <h2>What it does</h2>
+  <p>You drop in a song file. About 30 seconds later, the chords scroll in time with the music, with the current and next chord, a guitar shape for each one, and a list of the song's main chords. Everything runs on the Mac, so no audio is uploaded.</p>
+  <ol>
+    <li>Separate the sustained, pitched sound from the drums.</li>
+    <li>Find the beat and measure which of the 12 notes sound on each beat.</li>
+    <li>Compare each beat with 48 chord templates: major, minor, 7 and minor 7 on every root.</li>
+    <li>Choose the most likely sequence of chords, so one noisy beat can't flip the answer.</li>
+  </ol>
+  <p>On audio I generated with known chords, it reached 97.0% for root and major/minor. That proved the pipeline worked. It said very little about real records.</p>
+
+  <h2>How it did on real songs</h2>
+  <p>The test set is eight songs from my library that have official Ultimate Guitar tabs. Four were for tuning. Four were held back and scored one time, after the app was frozen. A ninth song is a best-case showcase, picked because it suits the app, so it isn't evidence of typical accuracy.</p>
+  <div class="legend" aria-hidden="true">
+    <span><svg width="14" height="14" style="min-width:0;width:14px"><circle cx="7" cy="7" r="5.5" fill="var(--allowed)"/></svg>Allowed</span>
+    <span><svg width="14" height="14" style="min-width:0;width:14px"><rect x="2.5" y="2.5" width="9" height="9" transform="rotate(45 7 7)" fill="var(--found)"/></svg>Found</span>
+  </div>
+  <div class="chart-wrap" id="chartWrap">
+    <div id="chart"></div>
+    <div id="tip" role="status"></div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Song</th><th class="n">Normal mode</th><th class="n">Power chord mode</th><th class="n">Always one chord</th><th class="n">Song counted</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <p class="note">Each pair shows Allowed / Found. "Always one chord" is the best score from repeating a single root, the baseline any real result has to beat on Found. Sections listing more than four roots, or none, aren't counted. Section times come from each tab's timeline, so they're approximate. The <em>Bro Hymn</em> recording is a longer version than its tab, and every section lists the same roots.</p>
+
+  <h2>What failed</h2>
+  <p>The hardest problem was distorted power chords, the core of the music I listen to. Every fix below looked reasonable. Testing is what stopped the bad ones from shipping.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Attempt</th><th>Result</th><th>Decision</th></tr></thead>
+      <tbody>
+        <tr><td>Boost the contrast between strong and faint notes</td><td>Generated power chords rose from 0% to about 72%, but the 12-bar blues fell from about 76% to about 13% and real piano chords were mislabelled</td><td class="verdict">Removed</td></tr>
+        <tr><td>Detect a power chord by its missing third</td><td>Worked on generated audio. On real records, distortion created false thirds and quiet piano passages lost real ones</td><td class="verdict">Removed</td></tr>
+        <tr><td>Manual power chord mode</td><td>98.0% correct roots on generated songs, but it averages below normal mode on real ones: 63.6% / 56.3% on the held-back songs</td><td class="verdict">Kept as an option</td></tr>
+        <tr><td>Change how the root and fifth are weighted</td><td>Lifted Helmet's <em>In The Meantime</em> from 25.6% to 87.4% in power mode, then fell to 54.1% on Pantera's <em>Psycho Holiday</em>, below the existing mode's 72.9%</td><td class="verdict">Rejected</td></tr>
+        <tr><td>Treat the lowest sounding note as the root</td><td>All 18 variations scored below the current app on the tuning songs</td><td class="verdict">Rejected</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>What I learned</h2>
+  <ul>
+    <li><strong>The root often isn't the loudest low note.</strong> In a Helmet D5 passage, the strongest low pitches included A2 and D3, the chord's fifth and upper root, with no D2 near the top. In a Pantera passage, B2 and E3 led for an E5. Single-note rules keep missing what a listener hears from the whole sound.</li>
+    <li><strong>A good average can hide a bad trade.</strong> One change improved power chords while wrecking sevenths, and only the song-by-song rows showed it.</li>
+    <li><strong>A score needs a baseline.</strong> My first metric gave 100% to a program that repeats D forever, so I added Found and an always-one-chord comparison.</li>
+    <li><strong>Test on songs you didn't tune on.</strong> The change that scored 87.4% on one song fell apart on the next. Holding songs back caught that before it reached the app.</li>
+    <li><strong>The first reference was bad.</strong> A user-made chord chart barely fit the recording at any pitch, so I dropped it for official tabs.</li>
+  </ul>
+
+  <h2>What I'd try next</h2>
+  <p>Hand-written rules have probably reached their limit here. The next test would be a trained chord model, judged on the same songs. New held-back songs would be needed, because these four have now been used. Live listening and draft tabs would come after that, since both depend on reading the chords correctly first.</p>
+
+  <footer>
+    Built with Claude Code. I set the goals, made the product decisions and judged results by ear as a guitarist, and Claude wrote the code. Python, librosa and a local web player, on an Intel Mac. Scored November 2026. No audio, lyrics or tab text are included here.
+  </footer>
+</main>
+<script>
+const groups = [
+  ["Best-case showcase", [
+    ["Nick Cave, Where The Wild Roses Grow", 97.2, 100, 91.8, 96.7, 100, 29.0, 60],
+  ]],
+  ["Held-back songs (scored once)", [
+    ["Helmet, Unsung", 75.9, 71.7, 68.2, 71.7, 100, 34.7, 100],
+    ["Pantera, Cowboys From Hell", 31.5, 50.0, 18.2, 25.0, 100, 25.0, 76],
+    ["Pantera, Domination", 91.9, 62.0, 91.7, 62.0, 100, 38.0, 29],
+    ["Pennywise, Bro Hymn", 65.0, 60.1, 76.5, 66.5, 100, 25.0, 100],
+  ]],
+  ["Tuning songs", [
+    ["Helmet, In The Meantime", 51.1, 67.6, 25.8, 58.4, 100, 36.6, 90],
+    ["Pantera, Psycho Holiday", 64.9, 80.5, 72.9, 85.1, 61.2, 33.0, 100],
+    ["Tool, Hush", 80.8, 84.8, 78.1, 82.0, 100, 33.5, 100],
+    ["Nick Cave, Into My Arms", 89.2, 80.1, 91.8, 80.1, 87.2, 33.7, 100],
+  ]],
+];
+const pair = (a, b) => `${a.toFixed(1)}% / ${b.toFixed(1)}%`;
+
+const body = document.getElementById("rows");
+for (const [name, songs] of groups) {
+  const band = body.insertRow();
+  band.className = "band";
+  const cell = band.insertCell();
+  cell.colSpan = 5;
+  cell.textContent = name;
+  for (const s of songs) {
+    const row = body.insertRow();
+    row.insertCell().textContent = s[0];
+    for (const text of [pair(s[1], s[2]), pair(s[3], s[4]), pair(s[5], s[6]), `${s[7]}%`]) {
+      const c = row.insertCell();
+      c.className = "n";
+      c.textContent = text;
+    }
+  }
+}
+
+const left = 262, right = 700, rowH = 30, bandH = 30, chartTop = 8;
+const x = v => left + (v / 100) * (right - left);
+let y = chartTop, marks = "";
+for (const [name, songs] of groups) {
+  y += bandH;
+  marks += `<text class="group" x="0" y="${y - 8}">${name}</text>`;
+  for (const s of songs) {
+    const cy = y + rowH / 2;
+    const label = `${s[0]}: Allowed ${s[1].toFixed(1)}%, Found ${s[2].toFixed(1)}%`;
+    marks += `<g class="row" tabindex="0" aria-label="${label}" data-tip="${label}">
+      <rect class="hit" x="0" y="${y}" width="720" height="${rowH}"/>
+      <text class="song" x="0" y="${cy + 4.5}">${s[0]}</text>
+      <line x1="${x(Math.min(s[1], s[2]))}" x2="${x(Math.max(s[1], s[2]))}" y1="${cy}" y2="${cy}" stroke="var(--line)" stroke-width="2"/>
+      <rect x="${x(s[2]) - 5}" y="${cy - 5}" width="10" height="10" transform="rotate(45 ${x(s[2])} ${cy})" fill="var(--found)" stroke="var(--paper)" stroke-width="2"/>
+      <circle cx="${x(s[1])}" cy="${cy}" r="6.5" fill="var(--allowed)" stroke="var(--paper)" stroke-width="2"/>
+    </g>`;
+    y += rowH;
+  }
+}
+const bottom = y + 6;
+let grid = "";
+for (const v of [0, 25, 50, 75, 100]) {
+  grid += `<line x1="${x(v)}" x2="${x(v)}" y1="${chartTop + 10}" y2="${bottom}" stroke="var(--line)" stroke-width="1"/>
+    <text x="${x(v)}" y="${bottom + 18}" text-anchor="middle">${v}%</text>`;
+}
+document.getElementById("chart").innerHTML =
+  `<svg viewBox="0 0 720 ${bottom + 26}" role="img" aria-label="Allowed and Found scores for nine songs in normal mode. The same numbers are in the table below.">${grid}${marks}</svg>`;
+
+const wrap = document.getElementById("chartWrap"), tip = document.getElementById("tip");
+function show(event) {
+  const row = event.target.closest(".row");
+  if (!row) { tip.style.opacity = 0; return; }
+  tip.textContent = row.dataset.tip;
+  const box = wrap.getBoundingClientRect(), mark = row.getBoundingClientRect();
+  tip.style.left = `${Math.max(0, Math.min(box.width - 270, (event.clientX || mark.left + 270) - box.left + 12))}px`;
+  tip.style.top = `${mark.top - box.top - 44}px`;
+  tip.style.opacity = 1;
+}
+wrap.addEventListener("mousemove", show);
+wrap.addEventListener("focusin", show);
+wrap.addEventListener("mouseleave", () => { tip.style.opacity = 0; });
+wrap.addEventListener("focusout", () => { tip.style.opacity = 0; });
+</script>
+</body>
+</html>
