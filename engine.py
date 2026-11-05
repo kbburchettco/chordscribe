@@ -1,4 +1,4 @@
-"""ChordScribe engine: turn an audio file into a timed chord chart.
+"""ChordCruncher engine: turn an audio file into a timed chord chart.
 
 Pipeline
   1. Decode to mono 22 kHz (macOS `afconvert`, so no ffmpeg is needed).

@@ -1,10 +1,10 @@
-# ChordScribe
+# ChordCruncher
 
 Drop in a song and see its chords scroll by in time with the music, with a guitar shape for each one. Everything runs on your Mac, and your audio is never uploaded.
 
 ## Start it
 
-Double-click **Open ChordScribe.command**. If macOS blocks it the first time, right-click the file and choose Open. The first run takes a few minutes to install. After that, the app opens in your browser.
+Double-click **Open ChordCruncher.command**. If macOS blocks it the first time, right-click the file and choose Open. The first run takes a few minutes to install. After that, the app opens in your browser.
 
 To stop it, close the Terminal window.
 

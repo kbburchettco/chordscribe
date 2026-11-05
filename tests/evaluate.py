@@ -5,7 +5,7 @@ list. Variants add the things that hurt real recordings: distortion, off-pitch
 tuning and a vocal-like melody. This proves the pipeline works; it says little
 about accuracy on real records, which are much messier.
 
-Run from the chordscribe folder:  .venv/bin/python tests/evaluate.py
+Run from the project folder:  .venv/bin/python tests/evaluate.py
 """
 import os
 import sys

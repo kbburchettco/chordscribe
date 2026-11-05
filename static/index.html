@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ChordScribe</title>
+<title>ChordCruncher</title>
 <style>
   :root {
     --bg: #14130f; --panel: #1f1d17; --line: #38342a; --text: #f3eee2;
@@ -86,7 +86,7 @@
 <body>
 <main>
   <header>
-    <h1>ChordScribe</h1>
+    <h1>ChordCruncher</h1>
     <p>See the chords in any song</p>
   </header>
 
@@ -308,7 +308,7 @@ $("file").addEventListener("change", event => {
 });
 $("demo").addEventListener("click", async () => {
   const blob = await (await fetch("/demo.wav")).blob();
-  analyze(new File([blob], "ChordScribe demo.wav", { type: "audio/wav" }));
+  analyze(new File([blob], "ChordCruncher demo.wav", { type: "audio/wav" }));
 });
 $("another").addEventListener("click", () => {
   audio.pause();

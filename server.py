@@ -1,4 +1,4 @@
-"""Local web server for ChordScribe. Nothing leaves this computer."""
+"""Local web server for ChordCruncher. Nothing leaves this computer."""
 import hashlib
 import json
 import os
@@ -87,7 +87,7 @@ class Handler(BaseHTTPRequestHandler):
         suffix = os.path.splitext(name)[1].lower()
         if suffix == ".m4p":
             self.close_connection = True
-            self.send_json(415, {"error": "This is a copy-protected file, so ChordScribe can't read it. "
+            self.send_json(415, {"error": "This is a copy-protected file, so ChordCruncher can't read it. "
                                           "Please use an unprotected MP3 or M4A."})
             return
         if suffix not in ALLOWED_SUFFIXES:
@@ -110,5 +110,5 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    print(f"ChordScribe is running at http://{HOST}:{PORT}  (press Ctrl+C to stop)", flush=True)
+    print(f"ChordCruncher is running at http://{HOST}:{PORT}  (press Ctrl+C to stop)", flush=True)
     ThreadingHTTPServer((HOST, PORT), Handler).serve_forever()
