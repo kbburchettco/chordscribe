@@ -75,27 +75,28 @@
 <body>
 <main>
   <h1>ChordScribe</h1>
-  <p class="lede">I wanted a Mac app that could listen to any song and write out its chords. I built one, then tested it against official tabs to find out where it works and where it doesn't.</p>
+  <p class="lede">I wanted to, in a day, build a Mac app that could listen to any song and write out its chords. Yes, there are websites a plenty and YouTube videos out there, but I wanted to combine my hobbies of guitar playing with seeing what Claude Code could do. So I built one, then tested it against official tabs to find out where it worked and where it tapped out.</p>
 
   <section class="numbers" aria-label="Headline results, normal mode">
     <div class="number"><strong>Best case</strong><b>97.2% / 100%</b><span>Allowed / Found on a simple, cleaner song chosen to suit the app</span></div>
     <div class="number"><strong>Fair test</strong><b>66.1% / 60.9%</b><span>Average on four songs held back from all tuning and scored once</span></div>
     <div class="number"><strong>Worst case</strong><b>31.5% / 50.0%</b><span>Pantera's <em>Cowboys From Hell</em>, one of the held-back songs</span></div>
   </section>
-  <p class="note">Allowed is the share of time showing a chord root the tab lists for that section. Found is the share of a section's listed roots the app actually showed. These are section-level checks, not chord-by-chord accuracy.</p>
+  <p class="note">Allowed is the share of time showing a chord root the tab lists for that section. Found is the share of a section's listed roots the app actually showed. Keep in mind these are section-level checks, not chord-by-chord accuracy.</p>
 
   <h2>What it does</h2>
-  <p>You drop in a song file. About 30 seconds later, the chords scroll in time with the music, with the current and next chord, a guitar shape for each one, and a list of the song's main chords. Everything runs on the Mac, so no audio is uploaded.</p>
+  <p>You drop in a song file. About 30 seconds later, the chords scroll in time with the music, with the current and next chord, a guitar shape for each one, and a list of the song's main chords. Everything runs locally on the Mac, so no audio is uploaded.</p>
   <ol>
-    <li>Separate the sustained, pitched sound from the drums.</li>
-    <li>Find the beat and measure which of the 12 notes sound on each beat.</li>
-    <li>Compare each beat with 48 chord templates: major, minor, 7 and minor 7 on every root.</li>
-    <li>Choose the most likely sequence of chords, so one noisy beat can't flip the answer.</li>
+    <li>Separates the sustained, pitched sound from the drums.</li>
+    <li>Finds the beat and measures which of the 12 notes sound on each beat.</li>
+    <li>Compares each beat with 48 chord templates: major, minor, 7 and minor 7 on every root.</li>
+    <li>Chooses the most likely sequence of chords, so one noisy beat can't flip the answer.</li>
   </ol>
-  <p>On audio I generated with known chords, it reached 97.0% for root and major/minor. That proved the pipeline worked. It said very little about real records.</p>
+  <p>On audio I generated with known chords, it reached 97.0% for root and major/minor. That proved the pipeline worked. It said very little about real recordings.</p>
 
   <h2>How it did on real songs</h2>
-  <p>The test set is eight songs from my library that have official Ultimate Guitar tabs. Four were for tuning. Four were held back and scored one time, after the app was frozen. A ninth song is a best-case showcase, picked because it suits the app, so it isn't evidence of typical accuracy.</p>
+  <p>The test set is eight songs from my local library that have official Ultimate-Guitar.com tabs. Four were for tuning. Four were held back and scored one time, after the app was frozen. A ninth song is a best-case showcase, picked because it suits the app, so it isn't evidence of typical accuracy.</p>
+  <p>Not surprisingly, Nick Cave's tender and restrained "Where the Wild Roses Grow" performed best.</p>
   <div class="legend" aria-hidden="true">
     <span><svg width="14" height="14" style="min-width:0;width:14px"><circle cx="7" cy="7" r="5.5" fill="var(--allowed)"/></svg>Allowed</span>
     <span><svg width="14" height="14" style="min-width:0;width:14px"><rect x="2.5" y="2.5" width="9" height="9" transform="rotate(45 7 7)" fill="var(--found)"/></svg>Found</span>
@@ -110,10 +111,10 @@
       <tbody id="rows"></tbody>
     </table>
   </div>
-  <p class="note">Each pair shows Allowed / Found. "Always one chord" is the best score from repeating a single root, the baseline any real result has to beat on Found. Sections listing more than four roots, or none, aren't counted. Section times come from each tab's timeline, so they're approximate. The <em>Bro Hymn</em> recording is a longer version than its tab, and every section lists the same roots.</p>
+  <p class="note">Each pair shows Allowed / Found. "Always one chord" is the best score from repeating a single root, the baseline any real result has to beat on Found. Sections listing more than four roots, or none, aren't counted. Section times come from each tab's timeline, so they're approximate. Pennywise's <em>Bro Hymn</em> recording is a longer version than its tab, and every section lists the same roots.</p>
 
   <h2>What failed</h2>
-  <p>The hardest problem was distorted power chords, the core of the music I listen to. Every fix below looked reasonable. Testing is what stopped the bad ones from shipping.</p>
+  <p>Unfortunately, the hardest problem was distorted power chords, the core of the music I listen to. Every fix below looked reasonable. Testing is what stopped the bad ones from shipping.</p>
   <div class="table-wrap">
     <table>
       <thead><tr><th>Attempt</th><th>Result</th><th>Decision</th></tr></thead>
@@ -129,7 +130,7 @@
 
   <h2>What I learned</h2>
   <ul>
-    <li><strong>The root often isn't the loudest low note.</strong> In a Helmet D5 passage, the strongest low pitches included A2 and D3, the chord's fifth and upper root, with no D2 near the top. In a Pantera passage, B2 and E3 led for an E5. Single-note rules keep missing what a listener hears from the whole sound.</li>
+    <li><strong>The root often isn't the loudest low note.</strong> Obviously and a big "duh" given the layers of guitars, bass and the overall mix. In a Helmet D5 passage, the strongest low pitches included A2 and D3, the chord's fifth and upper root, with no D2 near the top [Shakes fist at Page Hamilton]. In a Pantera passage, B2 and E3 led for an E5. Single-note rules keep missing what a listener hears from the whole sound.</li>
     <li><strong>A good average can hide a bad trade.</strong> One change improved power chords while wrecking sevenths, and only the song-by-song rows showed it.</li>
     <li><strong>A score needs a baseline.</strong> My first metric gave 100% to a program that repeats D forever, so I added Found and an always-one-chord comparison.</li>
     <li><strong>Test on songs you didn't tune on.</strong> The change that scored 87.4% on one song fell apart on the next. Holding songs back caught that before it reached the app.</li>
@@ -137,10 +138,10 @@
   </ul>
 
   <h2>What I'd try next</h2>
-  <p>Hand-written rules have probably reached their limit here. The next test would be a trained chord model, judged on the same songs. New held-back songs would be needed, because these four have now been used. Live listening and draft tabs would come after that, since both depend on reading the chords correctly first.</p>
+  <p>Hand-written rules have probably reached their limit here, there's just too many variables to cover. The next test would be a trained chord model, judged on the same songs. New held-back songs would be needed, because these four have now been used. Live listening and draft tabs would come after that, since both depend on reading the chords correctly first.</p>
 
   <footer>
-    Built with Claude Code. I set the goals, made the product decisions and judged results by ear as a guitarist, and Claude wrote the code. Python, librosa and a local web player, on an Intel Mac. Scored November 2026. No audio, lyrics or tab text are included here.
+    Built with Claude Code. I set the goals, made the product decisions and judged results by ear as a guitarist, and Claude wrote the code. Python, librosa and a local web player, on an old Intel Mac. Scored November 2026. No audio, lyrics or tab text are included here.
   </footer>
 </main>
 <script>
