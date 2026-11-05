@@ -32,7 +32,7 @@ The code is in `engine.py`. `server.py` runs it locally, and `static/index.html`
 
 These results show the pipeline works, but they are not a real-world accuracy figure. Real recordings are harder, and the settings were adjusted using these same songs.
 
-**On real recordings:** 8 songs with Ultimate Guitar official tabs, stored as chord roots and section lengths in `tests/real_songs.json`. Four guided changes to the app. Four were held out until the app was frozen, so a fix couldn't simply be fitted to the test.
+**On real recordings:** 8 songs with Ultimate Guitar official tabs, stored as chord roots and section lengths in `tests/real_songs.json`. Four were used to try possible changes, and none of those changes were added to the chord engine. Four were held out until the app was frozen, so a fix couldn't simply be fitted to the test.
 
 Run `.venv/bin/python tests/score_real.py` to score the tuning songs. Current baseline:
 
