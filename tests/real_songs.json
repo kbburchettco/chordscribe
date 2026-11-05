@@ -69,7 +69,8 @@
             "F"
           ]
         ]
-      ]
+      ],
+      "also_in_mix": true
     },
     {
       "title": "Pantera - Psycho Holiday",
@@ -937,6 +938,634 @@
           [
             "G",
             "F"
+          ]
+        ]
+      ],
+      "also_in_mix": true
+    },
+    {
+      "title": "Pink Floyd - Breathe",
+      "file": "../Downloads/02 - Breathe (In The Air) [2011 Remastered Version].mp3",
+      "split": "mix",
+      "tab_length": "2:51",
+      "tab": "https://tabs.ultimate-guitar.com/tab/pink-floyd/breathe-official-2157761",
+      "sections": [
+        [
+          "Intro",
+          44.5558,
+          [
+            "C",
+            "B",
+            "F"
+          ]
+        ],
+        [
+          "Verse 1",
+          17.8223,
+          []
+        ],
+        [
+          "Chorus",
+          8.91117,
+          [
+            "C",
+            "B",
+            "F"
+          ]
+        ],
+        [
+          "Verse 2",
+          17.8223,
+          []
+        ],
+        [
+          "Chorus",
+          10.8883,
+          [
+            "C",
+            "B",
+            "F",
+            "A"
+          ]
+        ]
+      ],
+      "note": "The tab's Chords view lists no verse chords, and its intro chords look doubtful. They are used as written."
+    },
+    {
+      "title": "David Bowie - Suffragette City",
+      "file": "../Downloads/10 - Suffragette City (2012 Remaster).mp3",
+      "split": "mix",
+      "tab_length": "3:28",
+      "tab": "https://tabs.ultimate-guitar.com/tab/david-bowie/suffragette-city-official-2155287",
+      "sections": [
+        [
+          "Intro",
+          5.76923,
+          [
+            "G",
+            "A"
+          ]
+        ],
+        [
+          "Verse 1",
+          13.1868,
+          [
+            "A",
+            "F",
+            "G",
+            "B",
+            "D"
+          ]
+        ],
+        [
+          "Chorus",
+          8.24176,
+          [
+            "A",
+            "D",
+            "F",
+            "C",
+            "G"
+          ]
+        ],
+        [
+          "Intro Riff",
+          3.2967,
+          []
+        ],
+        [
+          "Verse 2",
+          6.59341,
+          [
+            "A",
+            "F",
+            "G",
+            "B",
+            "D"
+          ]
+        ],
+        [
+          "Chorus",
+          8.24176,
+          [
+            "A",
+            "D",
+            "F",
+            "C",
+            "G"
+          ]
+        ],
+        [
+          "Solo",
+          6.59341,
+          [
+            "A",
+            "F",
+            "G",
+            "B",
+            "D"
+          ]
+        ],
+        [
+          "Chorus",
+          14.8352,
+          [
+            "A",
+            "D",
+            "F",
+            "C",
+            "G"
+          ]
+        ],
+        [
+          "Bridge",
+          13.1868,
+          [
+            "A",
+            "F",
+            "G"
+          ]
+        ],
+        [
+          "Break",
+          3.98179,
+          [
+            "E",
+            "A"
+          ]
+        ],
+        [
+          "Outro",
+          16.0731,
+          [
+            "A",
+            "F",
+            "G",
+            "E"
+          ]
+        ]
+      ]
+    },
+    {
+      "title": "CCR - Who'll Stop The Rain",
+      "file": "../Downloads/11 - Who'll Stop The Rain.mp3",
+      "split": "mix",
+      "tab_length": "2:17",
+      "tab": "https://tabs.ultimate-guitar.com/tab/creedence-clearwater-revival/wholl-stop-the-rain-official-1948027",
+      "sections": [
+        [
+          "Intro",
+          8.47657,
+          [
+            "G",
+            "D",
+            "E"
+          ]
+        ],
+        [
+          "Verse 1",
+          11.3021,
+          [
+            "G",
+            "C"
+          ]
+        ],
+        [
+          "Pre-Chorus",
+          5.65105,
+          [
+            "G",
+            "C"
+          ]
+        ],
+        [
+          "Chorus",
+          7.06381,
+          [
+            "C",
+            "D",
+            "E",
+            "G"
+          ]
+        ],
+        [
+          "Verse 2",
+          11.3021,
+          [
+            "G",
+            "B",
+            "C"
+          ]
+        ],
+        [
+          "Pre-Chorus",
+          5.65105,
+          [
+            "G",
+            "C"
+          ]
+        ],
+        [
+          "Chorus",
+          7.06381,
+          [
+            "C",
+            "D",
+            "E",
+            "G"
+          ]
+        ],
+        [
+          "Bridge",
+          8.47657,
+          [
+            "C",
+            "G",
+            "D",
+            "A",
+            "E"
+          ]
+        ],
+        [
+          "Verse 3",
+          11.3021,
+          [
+            "G",
+            "B",
+            "C"
+          ]
+        ],
+        [
+          "Pre-Chorus",
+          5.65105,
+          [
+            "G",
+            "C"
+          ]
+        ],
+        [
+          "Chorus",
+          5.65105,
+          [
+            "C",
+            "D",
+            "E"
+          ]
+        ],
+        [
+          "Outro",
+          12.4088,
+          [
+            "G",
+            "D",
+            "E"
+          ]
+        ]
+      ]
+    },
+    {
+      "title": "Weezer - Buddy Holly",
+      "file": "../Downloads/04 - Buddy Holly.mp3",
+      "split": "mix",
+      "tab_length": "2:40",
+      "tab": "https://tabs.ultimate-guitar.com/tab/weezer/buddy-holly-official-1948597",
+      "sections": [
+        [
+          "Verse 1",
+          10,
+          [
+            "F",
+            "Eb",
+            "Ab"
+          ]
+        ],
+        [
+          "Pre-Chorus",
+          7.5,
+          [
+            "C#",
+            "C",
+            "F"
+          ]
+        ],
+        [
+          "Chorus",
+          10,
+          [
+            "Ab",
+            "C#",
+            "Eb",
+            "F"
+          ]
+        ],
+        [
+          "Interlude",
+          5,
+          [
+            "F",
+            "Eb",
+            "Ab"
+          ]
+        ],
+        [
+          "Verse 2",
+          10,
+          [
+            "F",
+            "Eb",
+            "Ab"
+          ]
+        ],
+        [
+          "Pre-Chorus",
+          7.5,
+          [
+            "C#",
+            "C",
+            "F"
+          ]
+        ],
+        [
+          "Chorus",
+          12.5,
+          [
+            "Ab",
+            "C#",
+            "Eb",
+            "F"
+          ]
+        ],
+        [
+          "Break",
+          10,
+          [
+            "Ab",
+            "F"
+          ]
+        ],
+        [
+          "Guitar Solo",
+          10,
+          [
+            "C#",
+            "C",
+            "F"
+          ]
+        ],
+        [
+          "Chorus",
+          17.5,
+          [
+            "Ab",
+            "C#",
+            "Eb",
+            "F"
+          ]
+        ]
+      ],
+      "note": "The tab's chord names are already the sounding pitches for its half-step-down tuning."
+    },
+    {
+      "title": "The Who - Behind Blue Eyes",
+      "file": "../Downloads/08 - Behind Blue Eyes.mp3",
+      "split": "mix",
+      "tab_length": "3:34",
+      "tab": "https://tabs.ultimate-guitar.com/tab/the-who/behind-blue-eyes-official-2222339",
+      "sections": [
+        [
+          "Intro",
+          3.63255,
+          [
+            "E"
+          ]
+        ],
+        [
+          "Verse 1",
+          14.0187,
+          [
+            "E",
+            "G",
+            "D",
+            "C",
+            "A"
+          ]
+        ],
+        [
+          "Chorus",
+          16.1495,
+          [
+            "D",
+            "G",
+            "C",
+            "E",
+            "B",
+            "A"
+          ]
+        ],
+        [
+          "Verse 2",
+          14.1291,
+          [
+            "E",
+            "G",
+            "D",
+            "C",
+            "A"
+          ]
+        ],
+        [
+          "Chorus",
+          16.2494,
+          [
+            "D",
+            "G",
+            "C",
+            "E",
+            "B",
+            "A"
+          ]
+        ],
+        [
+          "Interlude",
+          3.37292,
+          [
+            "E",
+            "B",
+            "A"
+          ]
+        ],
+        [
+          "Verse 3",
+          8.43229,
+          [
+            "E",
+            "B",
+            "A",
+            "G",
+            "D"
+          ]
+        ],
+        [
+          "Verse 4",
+          6.6955,
+          [
+            "E",
+            "B",
+            "A",
+            "G",
+            "D"
+          ]
+        ],
+        [
+          "Solo",
+          3.34775,
+          [
+            "B",
+            "A",
+            "E"
+          ]
+        ],
+        [
+          "Bridge",
+          6.6955,
+          [
+            "B",
+            "A",
+            "G",
+            "D"
+          ]
+        ],
+        [
+          "Outro",
+          7.2768,
+          [
+            "E",
+            "G",
+            "D",
+            "C",
+            "A"
+          ]
+        ]
+      ]
+    },
+    {
+      "title": "Echo - The Killing Moon",
+      "file": "../Downloads/08 - The Killing Moon.mp3",
+      "split": "mix",
+      "tab_length": "5:45",
+      "tab": "https://tabs.ultimate-guitar.com/tab/echo-the-bunnymen/the-killing-moon-official-2932670",
+      "sections": [
+        [
+          "Intro",
+          6.73212,
+          [
+            "B",
+            "G"
+          ]
+        ],
+        [
+          "Verse 1",
+          6.73212,
+          [
+            "E",
+            "C"
+          ]
+        ],
+        [
+          "Chorus",
+          5.6101,
+          [
+            "G",
+            "C"
+          ]
+        ],
+        [
+          "Interlude",
+          2.24404,
+          [
+            "E",
+            "C"
+          ]
+        ],
+        [
+          "Verse 2",
+          6.73212,
+          [
+            "E",
+            "C"
+          ]
+        ],
+        [
+          "Chorus",
+          5.6101,
+          [
+            "G",
+            "C"
+          ]
+        ],
+        [
+          "Solo 1",
+          8.97616,
+          [
+            "B",
+            "G",
+            "E"
+          ]
+        ],
+        [
+          "Interlude",
+          2.24404,
+          [
+            "E",
+            "C"
+          ]
+        ],
+        [
+          "Verse 3",
+          6.73212,
+          [
+            "E",
+            "C"
+          ]
+        ],
+        [
+          "Chorus",
+          12.3422,
+          [
+            "G",
+            "C"
+          ]
+        ],
+        [
+          "Solo 2",
+          6.73212,
+          [
+            "G",
+            "C"
+          ]
+        ],
+        [
+          "Chorus",
+          6.73212,
+          [
+            "G",
+            "C"
+          ]
+        ],
+        [
+          "Outro",
+          15.7083,
+          [
+            "G",
+            "C"
+          ]
+        ],
+        [
+          "Fade Out",
+          6.87239,
+          [
+            "G",
+            "C"
           ]
         ]
       ]

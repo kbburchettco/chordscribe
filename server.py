@@ -85,6 +85,11 @@ class Handler(BaseHTTPRequestHandler):
             return
         name = parse_qs(url.query).get("name", [""])[0]
         suffix = os.path.splitext(name)[1].lower()
+        if suffix == ".m4p":
+            self.close_connection = True
+            self.send_json(415, {"error": "This is a copy-protected file, so ChordScribe can't read it. "
+                                          "Please use an unprotected MP3 or M4A."})
+            return
         if suffix not in ALLOWED_SUFFIXES:
             self.close_connection = True
             self.send_json(415, {"error": "Please use an MP3, M4A, WAV, AIFF or FLAC file."})

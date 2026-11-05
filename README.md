@@ -69,6 +69,22 @@ These four songs have now been used. Any future engine change needs new held-out
 
 The app also detected the correct key, G minor. Across the whole song, 91.7% of chord time landed on the song's chords or a seventh version of them. Its choruses list five roots, so they weren't counted in the table, which covers 60% of the song. The recording runs 21 seconds longer than the tab. Run `.venv/bin/python tests/score_real.py --showcase` to repeat this.
 
+**Rock and pop mix:** six new songs were scored on the frozen chord engine, under rules set in `tests/mix_test_rules.md`. Tab match is the same measure as Allowed, and chords caught is the same as Found.
+
+| Mix song | All sections: Tab match / Chords caught | Song counted |
+|---|---|---|
+| Echo & the Bunnymen, *The Killing Moon* | 88.2% / 97.0% | 100% |
+| CCR, *Who'll Stop The Rain* | 88.0% / 79.5% | 100% |
+| The Who, *Behind Blue Eyes* | 93.9% / 76.1% | 100% |
+| Weezer, *Buddy Holly* | 94.7% / 73.3% | 100% |
+| David Bowie, *Suffragette City* | 94.4% / 72.3% | 97% |
+| Pink Floyd, *Breathe* | 36.0% / 53.8% | 64% |
+| **Average** | **82.5% / 75.4%** | |
+
+The original rule skipped sections listing more than four roots, and it gave an average of 80.9% / 77.3%. The all-sections score was added after those results, because that rule counted as little as 17% of a song. Run `.venv/bin/python tests/score_real.py --mix --all-sections` to repeat it. The *Breathe* tab lists no verse chords and its intro chords look doubtful. These song files sit in Downloads, so the commands assume that location.
+
+With all sections counted, the earlier held-out songs average 66.2% / 54.2%, and *Where The Wild Roses Grow* falls from 100% to 80.2% chords caught.
+
 ## Known limits
 
 - **Power chords aren't detected automatically.** In normal mode, distorted riffs are forced into the nearest major, minor or seventh chord. Turn on power chord mode for those songs. An automatic test for missing thirds worked on generated audio but failed on real recordings, so it was removed.

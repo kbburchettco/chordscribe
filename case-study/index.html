@@ -77,15 +77,15 @@
 <body>
 <main>
   <h1>ChordScribe</h1>
-  <p class="lede">I wanted to, in a day, build a Mac app that could listen to any song and write out its chords. Yes, there are websites aplenty and YouTube videos out there, but I wanted to combine my hobbies of guitar playing with seeing what Claude Code could do. So I built it, then tested it against official tabs to find out where it worked and where it tapped out.</p>
+  <p class="lede">I wanted to, in a day, build a Mac app that could listen to any song and quickly write out its chords. Yes, there are websites aplenty and YouTube videos out there with tabs and chords, but I wanted to see how quickly a Claude Code-built app could handle it. So I built it, then tested it against official tabs to find out where it worked and where it tapped out.</p>
   <p class="code-link"><a href="https://github.com/kbburchettco/chordscribe">View the code on GitHub</a></p>
 
   <section class="numbers" aria-label="Headline results, normal mode">
-    <div class="number"><strong>Best case</strong><b>97.2% / 100%</b><span>Allowed / Found on a simple, cleaner song chosen to suit the app</span></div>
-    <div class="number"><strong>Fair test</strong><b>66.1% / 60.9%</b><span>Average on four songs held back from all tuning and scored once</span></div>
-    <div class="number"><strong>Worst case</strong><b>31.5% / 50.0%</b><span>Pantera's <em>Cowboys From Hell</em>, one of the held-back songs</span></div>
+    <div class="number"><strong>Rock and pop mix</strong><b>82.5% / 75.4%</b><span>Tab match / chords caught, averaged across six new songs</span></div>
+    <div class="number"><strong>Best full-song result</strong><b>88.2% / 97.0%</b><span>Echo &amp; the Bunnymen's <em>The Killing Moon</em></span></div>
+    <div class="number"><strong>Hardest song</strong><b>40.0% / 52.5%</b><span>Pantera's <em>Cowboys From Hell</em></span></div>
   </section>
-  <p class="note">Allowed is the share of time showing a chord root the tab lists for that section. Found is the share of a section's listed roots the app actually showed. Keep in mind these are section-level checks, not chord-by-chord accuracy.</p>
+  <p class="note">Tab match is how much of the song showed a chord the tab lists for that part. An 88% tab match means the app agreed with the tab about 88% of the time. Chords caught is how many of the chords listed for each part actually appeared. These are estimates by song section, not exact chord-by-chord accuracy.</p>
 
   <h2>What it does</h2>
   <p>You drop in a song file. About 30 seconds later, the chords scroll in time with the music, with the current and next chord, a guitar shape for each one, and a list of the song's main chords. Everything runs locally on the Mac, so no audio is uploaded.</p>
@@ -98,11 +98,12 @@
   <p>On audio I generated with known chords, it reached 97.0% for root and major/minor. That proved the pipeline worked. It said very little about real recordings.</p>
 
   <h2>How it did on real songs</h2>
-  <p>The test set is eight songs from my local library that have official Ultimate-Guitar.com tabs. Four were for tuning. Four were held back and scored one time, after the app was frozen. A ninth song is a best-case showcase, picked because it suits the app, so it isn't evidence of typical accuracy.</p>
-  <p>Not surprisingly, Nick Cave's tender and restrained "Where the Wild Roses Grow" performed best.</p>
+  <p>I tested it in two rounds, using songs with official Ultimate-Guitar.com tabs. The first round leaned on heavy, riff-based songs, and the app struggled. Four songs held back from all adjustments averaged a 66.2% tab match and 54.2% chords caught.</p>
+  <p>So I ran a second round with six rock and pop songs the app had never heard, without changing how it detects chords. Those songs averaged an 82.5% tab match and 75.4% chords caught.</p>
+  <p>Not surprisingly, Nick Cave's tender and restrained "Where the Wild Roses Grow" had the highest tab match, at 97.6%. Echo &amp; the Bunnymen's "The Killing Moon" caught the most chords, at 97.0%.</p>
   <div class="legend" aria-hidden="true">
-    <span><svg width="14" height="14" style="min-width:0;width:14px"><circle cx="7" cy="7" r="5.5" fill="var(--allowed)"/></svg>Allowed</span>
-    <span><svg width="14" height="14" style="min-width:0;width:14px"><rect x="2.5" y="2.5" width="9" height="9" transform="rotate(45 7 7)" fill="var(--found)"/></svg>Found</span>
+    <span><svg width="14" height="14" style="min-width:0;width:14px"><circle cx="7" cy="7" r="5.5" fill="var(--allowed)"/></svg>Tab match</span>
+    <span><svg width="14" height="14" style="min-width:0;width:14px"><rect x="2.5" y="2.5" width="9" height="9" transform="rotate(45 7 7)" fill="var(--found)"/></svg>Chords caught</span>
   </div>
   <div class="chart-wrap" id="chartWrap">
     <div id="chart"></div>
@@ -114,7 +115,8 @@
       <tbody id="rows"></tbody>
     </table>
   </div>
-  <p class="note">Each pair shows Allowed / Found. "Always one chord" is the best score from repeating a single root, the baseline any real result has to beat on Found. Sections listing more than four roots, or none, aren't counted. Section times come from each tab's timeline, so they're approximate. Pennywise's <em>Bro Hymn</em> recording is a longer version than its tab, and every section lists the same roots.</p>
+  <p class="note">Each pair shows tab match / chords caught. "Always one chord" is the control: the best score from showing the same chord for the whole song. It can score well on tab match, but it can't catch many chords, so chords caught is the better sign of real listening. Song counted is how much of the song could be compared with the tab.</p>
+  <p class="note">These scores count every section that lists chords. That change came after the first results, when a stricter rule counted as little as 17% of a song. Under that rule, the six new songs averaged 80.9% / 77.3%. Section times are approximate, because tabs run at a steady tempo and real bands drift. The <em>Breathe</em> tab lists no verse chords and its intro chords look doubtful, so its score may say more about the tab than the app. Pennywise's <em>Bro Hymn</em> recording is a longer version than its tab, and every section lists the same chords.</p>
 
   <h2>What failed</h2>
   <p>Unfortunately, the hardest problem was distorted power chords, the core of the music I listen to. Every fix below looked reasonable. Testing is what stopped the bad ones from shipping.</p>
@@ -124,9 +126,9 @@
       <tbody>
         <tr><td>Boost the contrast between strong and faint notes</td><td>Generated power chords rose from 0% to about 72%, but the generated 12-bar blues fell from about 76% to about 13% and real piano chords were mislabelled</td><td class="verdict">Removed</td></tr>
         <tr><td>Detect a power chord by its missing third</td><td>Worked on generated audio. On real records, distortion created false thirds and quiet piano passages lost real ones</td><td class="verdict">Removed</td></tr>
-        <tr><td>Manual power chord mode</td><td>98.0% correct roots on generated songs, but it averages below normal mode on real ones: 63.6% / 56.3% on the held-back songs</td><td class="verdict">Kept as an option</td></tr>
+        <tr><td>Manual power chord mode</td><td>98.0% correct roots on generated songs, but no clear win on real ones: 65.5% / 52.9% on the held-back songs, against 66.2% / 54.2% in normal mode</td><td class="verdict">Kept as an option</td></tr>
         <tr><td>Change how the root and fifth are weighted</td><td>Lifted Helmet's <em>In The Meantime</em> from 25.6% to 87.4% in power mode, then fell to 54.1% on Pantera's <em>Psycho Holiday</em>, below the existing mode's 72.9%</td><td class="verdict">Rejected</td></tr>
-        <tr><td>Treat the lowest sounding note as the root</td><td>All 18 variations scored below the current app on the tuning songs</td><td class="verdict">Rejected</td></tr>
+        <tr><td>Treat the lowest sounding note as the root</td><td>All 18 variations scored below the current app on the practice songs</td><td class="verdict">Rejected</td></tr>
       </tbody>
     </table>
   </div>
@@ -135,13 +137,14 @@
   <ul>
     <li><strong>The root often isn't the loudest low note.</strong> Obviously and a big "duh" given the layers of guitars, bass and the overall mix. In a Helmet D5 passage, the strongest low pitches included A2 and D3, the chord's fifth and upper root, with no D2 near the top [Shakes fist at Page Hamilton]. In a Pantera passage, B2 and E3 led for an E5. Single-note rules keep missing what a listener hears from the whole sound.</li>
     <li><strong>A good average can hide a bad trade.</strong> One change improved power chords while wrecking sevenths, and only the song-by-song rows showed it.</li>
-    <li><strong>A score needs a baseline.</strong> My first metric gave 100% to a program that repeats D forever, so I added Found and an always-one-chord comparison.</li>
-    <li><strong>Test on songs you didn't tune on.</strong> The change that scored 87.4% on one song fell apart on the next. Holding songs back caught that before it reached the app.</li>
-    <li><strong>The first reference was bad.</strong> A user-made chord chart barely fit the recording at any pitch, so I dropped it for official tabs.</li>
+    <li><strong>A score needs a baseline.</strong> My first metric gave 100% to a program that repeats D forever, so I added Chords caught and an always-one-chord comparison.</li>
+    <li><strong>Skipping the hard parts flatters a score.</strong> My first scoring skipped busy sections, which left only 17% of <em>Behind Blue Eyes</em> counted and gave <em>Wild Roses</em> a perfect 100% for chords caught. That looked wrong to me. Counting those sections gave a fairer 80.2%.</li>
+    <li><strong>Test on songs the app hasn't seen.</strong> The change that scored 87.4% on one song fell apart on the next. Holding songs back caught that before it reached the app.</li>
+    <li><strong>The first reference was bad.</strong> A user-made chord chart barely fit the recording at any pitch, so I dropped it instead for official Ultimate-Guitar tabs.</li>
   </ul>
 
   <h2>What I'd try next</h2>
-  <p>Hand-written rules have probably reached their limit here, there are just too many variables to cover. The next test would be a trained chord model, judged on the same songs. New held-back songs would be needed, because these four have now been used. Live listening and draft tabs would come after that, since both depend on reading the chords correctly first.</p>
+  <p>Hand-written rules have probably reached their limit here, there are just too many variables to cover. The next test would be a trained chord model, judged on the same songs. New held-back songs would be needed, because these have now been used. Live listening and draft tabs would come after that, since both depend on reading the chords correctly first. The human ear remains undefeated...for how long we'll have to see.</p>
 
   <footer>
     Built with Claude Code. I set the goals, made the product decisions and judged results by ear as a guitarist, and Claude wrote the code. Python, librosa and a local web player, on an old Intel Mac. Scored November 2026. No audio, lyrics or tab text are included here.
@@ -149,20 +152,24 @@
 </main>
 <script>
 const groups = [
-  ["Best-case showcase", [
-    ["Nick Cave, Where The Wild Roses Grow", 97.2, 100, 91.8, 96.7, 100, 29.0, 60],
+  ["Rock and pop mix (new songs)", [
+    ["Echo & the Bunnymen, The Killing Moon", 88.2, 97.0, 87.0, 96.6, 84.3, 42.1, 100],
+    ["CCR, Who'll Stop The Rain", 88.0, 79.5, 88.0, 82.3, 94.3, 33.9, 100],
+    ["The Who, Behind Blue Eyes", 93.9, 76.1, 92.3, 73.2, 96.4, 20.2, 100],
+    ["Weezer, Buddy Holly", 94.7, 73.3, 95.3, 79.0, 100, 31.7, 100],
+    ["David Bowie, Suffragette City", 94.4, 72.3, 91.2, 74.7, 100, 25.7, 97],
+    ["Pink Floyd, Breathe", 36.0, 53.8, 37.2, 53.8, 100, 31.9, 64],
   ]],
-  ["Held-back songs (scored once)", [
-    ["Helmet, Unsung", 75.9, 71.7, 68.2, 71.7, 100, 34.7, 100],
-    ["Pantera, Cowboys From Hell", 31.5, 50.0, 18.2, 25.0, 100, 25.0, 76],
-    ["Pantera, Domination", 91.9, 62.0, 91.7, 62.0, 100, 38.0, 29],
-    ["Pennywise, Bro Hymn", 65.0, 60.1, 76.5, 66.5, 100, 25.0, 100],
-  ]],
-  ["Tuning songs", [
-    ["Helmet, In The Meantime", 51.1, 67.6, 25.8, 58.4, 100, 36.6, 90],
-    ["Pantera, Psycho Holiday", 64.9, 80.5, 72.9, 85.1, 61.2, 33.0, 100],
-    ["Tool, Hush", 80.8, 84.8, 78.1, 82.0, 100, 33.5, 100],
+  ["Earlier songs", [
+    ["Nick Cave, Where The Wild Roses Grow", 97.6, 80.2, 95.1, 86.1, 100, 25.4, 100],
     ["Nick Cave, Into My Arms", 89.2, 80.1, 91.8, 80.1, 87.2, 33.7, 100],
+    ["Tool, Hush", 80.8, 84.8, 78.1, 82.0, 100, 33.5, 100],
+    ["Helmet, Unsung", 75.9, 71.7, 68.2, 71.7, 100, 34.7, 100],
+    ["Pennywise, Bro Hymn", 65.0, 60.1, 76.5, 66.5, 100, 25.0, 100],
+    ["Pantera, Psycho Holiday", 64.9, 80.5, 72.9, 85.1, 61.2, 33.0, 100],
+    ["Helmet, In The Meantime", 51.1, 67.6, 25.8, 58.4, 100, 36.6, 90],
+    ["Pantera, Domination", 83.8, 32.7, 86.2, 34.5, 75.0, 13.2, 100],
+    ["Pantera, Cowboys From Hell", 40.0, 52.5, 31.0, 38.8, 100, 19.6, 97],
   ]],
 ];
 const pair = (a, b) => `${a.toFixed(1)}% / ${b.toFixed(1)}%`;
@@ -193,10 +200,10 @@ for (const [name, songs] of groups) {
   marks += `<text class="group" x="0" y="${y - 8}">${name}</text>`;
   for (const s of songs) {
     const cy = y + rowH / 2;
-    const label = `${s[0]}: Allowed ${s[1].toFixed(1)}%, Found ${s[2].toFixed(1)}%`;
+    const label = `${s[0]}: tab match ${s[1].toFixed(1)}%, chords caught ${s[2].toFixed(1)}%`.replace(/&/g, "&amp;");
     marks += `<g class="row" tabindex="0" aria-label="${label}" data-tip="${label}">
       <rect class="hit" x="0" y="${y}" width="720" height="${rowH}"/>
-      <text class="song" x="0" y="${cy + 4.5}">${s[0]}</text>
+      <text class="song" x="0" y="${cy + 4.5}">${s[0].replace(/&/g, "&amp;")}</text>
       <line x1="${x(Math.min(s[1], s[2]))}" x2="${x(Math.max(s[1], s[2]))}" y1="${cy}" y2="${cy}" stroke="var(--line)" stroke-width="2"/>
       <rect x="${x(s[2]) - 5}" y="${cy - 5}" width="10" height="10" transform="rotate(45 ${x(s[2])} ${cy})" fill="var(--found)" stroke="var(--paper)" stroke-width="2"/>
       <circle cx="${x(s[1])}" cy="${cy}" r="6.5" fill="var(--allowed)" stroke="var(--paper)" stroke-width="2"/>
@@ -211,7 +218,7 @@ for (const v of [0, 25, 50, 75, 100]) {
     <text x="${x(v)}" y="${bottom + 18}" text-anchor="middle">${v}%</text>`;
 }
 document.getElementById("chart").innerHTML =
-  `<svg viewBox="0 0 720 ${bottom + 26}" role="img" aria-label="Allowed and Found scores for nine songs in normal mode. The same numbers are in the table below.">${grid}${marks}</svg>`;
+  `<svg viewBox="0 0 720 ${bottom + 26}" role="img" aria-label="Tab match and chords caught for fifteen songs in normal mode. The same numbers are in the table below.">${grid}${marks}</svg>`;
 
 const wrap = document.getElementById("chartWrap"), tip = document.getElementById("tip");
 function show(event) {

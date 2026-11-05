@@ -4,6 +4,10 @@
   .venv/bin/python tests/score_real.py --check    are all files present and the right length?
   .venv/bin/python tests/score_real.py --holdout  held-out songs (only for a frozen change)
   .venv/bin/python tests/score_real.py --showcase best-case demo songs, chosen to suit the app
+  .venv/bin/python tests/score_real.py --mix      rock and pop mix, plus two returning songs
+
+Add --all-sections to count every section that lists chords, however many.
+This was added after the first mix results. Allowed is easier to pass there.
 
 Tabs rarely say exactly when each chord lands, so this can't measure
 chord-by-chord accuracy. Two scores are reported instead:
@@ -29,7 +33,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 import engine  # noqa: E402
 
-MAX_ROOTS = 4
+MAX_ROOTS = 12 if "--all-sections" in sys.argv else 4
 FOUND_SHARE = 0.10
 STEP = 0.05
 MODES = (("Normal", "segments"), ("Power", "power_segments"))
@@ -126,12 +130,12 @@ def main():
         check(songs)
         return
 
-    split = "holdout" if "--holdout" in sys.argv else "showcase" if "--showcase" in sys.argv else "tune"
+    split = "holdout" if "--holdout" in sys.argv else "showcase" if "--showcase" in sys.argv else "mix" if "--mix" in sys.argv else "tune"
     totals = {name: [] for name, _ in MODES}
     print(f"{split.upper()} SONGS\n")
     print(f"{'Song':<30}{'Counted':>8}  {'Normal':>15}  {'Power':>15}  {'One chord':>15}  Best pitch offset")
     print(f"{'':<30}{'':>8}  {'Allowed/Found':>15}  {'Allowed/Found':>15}  {'Allowed/Found':>15}")
-    for song in (s for s in songs if s["split"] == split):
+    for song in (s for s in songs if s["split"] == split or (split == "mix" and s.get("also_in_mix"))):
         if not os.path.exists(song_path(song)):
             sys.exit(f"Missing file: {song_path(song)}")
         result = analyze(song)
@@ -145,7 +149,8 @@ def main():
             roots = timeline(result[key], times)
             normal_roots = roots if normal_roots is None else normal_roots
             allowed, found = score(roots, times, sections)
-            totals[name].append((allowed, found))
+            if song["split"] == split:  # returning songs don't count toward the average
+                totals[name].append((allowed, found))
             cells.append(f"{percent(allowed)} / {percent(found)}")
 
         constant = max(

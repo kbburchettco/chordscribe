@@ -74,7 +74,9 @@ def load_audio(path):
     except subprocess.CalledProcessError as error:
         raise ValueError("Could not read this audio file. It may be damaged or protected.") from error
     finally:
-        os.unlink(wav_path)
+        # afconvert removes its output file when it fails.
+        if os.path.exists(wav_path):
+            os.unlink(wav_path)
     if samples.size == 0:
         raise ValueError("This audio file is empty.")
     return samples
